@@ -1,0 +1,11 @@
+{
+  "name": "zen-test",
+  "version": "1.0.0",
+  "description": "https://yandex.ru/jobs/vacancies/interns/intern_frontdev_zen/",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
