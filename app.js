@@ -4,7 +4,23 @@ const readline = require('readline').createInterface({
   output: process.stdout,
 });
 
-function makeBoard(rows, columns) {
+let rows = 5;
+let columns = 5;
+
+function setFieldSize(callback) {
+  readline.question('select x size (5):', (n) => {
+    rows = Number(n) || rows;
+    console.log(`x size is: ${rows}`);
+
+    readline.question('select y size (5):', (n) => {
+      columns = Number(n) || columns;
+      console.log(`y size is: ${columns}`);
+      callback();
+    });
+  });
+}
+
+function makeBoard() {
   const x = new Array(Number(rows));
 
   for (let i = 0; i < rows; i += 1) {
@@ -38,9 +54,9 @@ function countNeighbors(i, j, board) {
 }
 
 function turn(board) {
-  const newBoard = new Array(Number(5));
+  const newBoard = new Array(Number(rows));
   for (let i = 0; i < board.length; i += 1) {
-    newBoard[i] = new Array(Number(5));
+    newBoard[i] = new Array(Number(columns));
     for (let j = 0; j < board[0].length; j += 1) {
       const neighbors = countNeighbors(i, j, board);
       if (board[i][j]) {
@@ -58,23 +74,27 @@ function turn(board) {
 }
 
 function live(b) {
-  const board = Array.isArray(b) ? b : makeBoard(5, 5);
+  const board = Array.isArray(b) ? b : makeBoard();
   setTimeout(() => turn(board), 1000);
 }
 
-function askForFile() {
+function init() {
   readline.question(
     'Place a link to js file with a two dimensional array of 0 and 1 or leave empty: ',
     (arr) => {
       try {
         const data = !arr ? '' : fs.readFileSync(arr);
-        live(data);
+        if (!data) {
+          setFieldSize(live);
+        } else {
+          live(data);
+        }
       } catch (error) {
         console.error(`Got an error trying to read the file: ${error.message}`);
-        askForFile();
+        init();
       }
     },
   );
 }
 
-askForFile();
+init();
